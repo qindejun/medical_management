@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.medical.mapper.DeviceMapper">
+    <insert id="AddDevice">
+        INSERT INTO medicaldevices (DeviceName, ModelNumber, Category, Manufacturer, RegistrationCert, CostPrice, UnitPrice, StorageRequirements)
+        VALUES (#{deviceName}, #{modelNumber}, #{category}, #{manufacturer},
+                #{registrationCert}, #{costPrice}, #{unitPrice}, #{storageRequirements})
+    </insert>
+    <update id="UpdateDevice">
+        UPDATE medicaldevices
+        SET
+        <if test="deviceName != null">
+            DeviceName = #{deviceName},
+        </if>
+        <if test="modelNumber != null">
+            ModelNumber = #{modelNumber},
+        </if>
+        <if test="category != null">
+            Category = #{category},
+        </if>
+        <if test="manufacturer != null">
+            Manufacturer = #{manufacturer},
+        </if>
+        <if test="registrationCert != null">
+            RegistrationCert = #{registrationCert},
+        </if>
+        <if test="costPrice != null">
+            CostPrice = #{costPrice},
+        </if>
+        <if test="unitPrice != null">
+            UnitPrice = #{unitPrice},
+        </if>
+        <if test="storageRequirements != null">
+            StorageRequirements = #{storageRequirements}
+        </if>
+        WHERE DeviceID = #{deviceID}
+    </update>
+
+    <select id="selectBySearch" resultType="com.medical.entity.Device">
+        select * from medicaldevices
+        <where>
+            status = 1
+            <if test="params != null and params.deviceName != null and params.deviceName != ''">
+                and DeviceName LIKE CONCAT('%', #{params.deviceName}, '%')
+            </if>
+            <if test="params != null and params.category != null and params.category != ''">
+                AND Category = #{params.category}
+            </if>
+            <if test="params != null and params.manufacturer != null and params.manufacturer != ''">
+                AND Manufacturer LIKE CONCAT('%', #{params.manufacturer}, '%')
+            </if>
+        </where>
+    </select>
+    <select id="selectByAdd" resultType="com.medical.entity.Device">
+        select * from medicaldevices
+        <where>
+            status = 1
+            <if test="deviceName != null">
+                and deviceName = #{deviceName}
+            </if>
+            <if test="modelNumber != null">
+                and modelNumber = #{modelNumber}
+            </if>
+            <if test="manufacturer != null">
+                and manufacturer = #{manufacturer}
+            </if>
+        </where>
+    </select>
+</mapper>

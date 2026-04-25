@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.medical.mapper.InventoryMapper">
+    <insert id="in">
+        insert into inventory (DeviceID, WarehouseID, Quantity, LastUpdated)
+        VALUES (#{deviceId},#{warehouseId},#{quantity},#{dateTime})
+    </insert>
+    <update id="out">
+        update inventory set Quantity = Quantity - #{quantity}
+        where
+            DeviceID = #{deviceId}
+        and
+            WarehouseID = #{warehouseId}
+    </update>
+    <update id="transfer">
+        update inventory set Quantity = Quantity + #{quantity}
+        where
+            DeviceID = #{deviceId}
+          and
+            WarehouseID = #{inWarehouseId}
+    </update>
+    <select id="findAll" resultType="com.medical.entity.Inventory">
+        SELECT
+            i.InventoryID,
+            i.lastUpdated,
+            i.quantity,
+            md.deviceName,
+            md.modelNumber,
+            md.category,
+            md.manufacturer,
+            w.location
+        FROM
+            inventory i
+                JOIN
+            medicaldevices md ON i.DeviceID = md.DeviceID
+                JOIN
+            warehouses w ON i.warehouseId = w.warehouseId
+    </select>
+    <select id="search" resultType="com.medical.entity.Inventory">
+        SELECT
+        i.InventoryID AS InventoryID,
+        m.DeviceName AS deviceName,
+        m.ModelNumber AS modelNumber,
+        m.Category AS category,
+        m.Manufacturer AS manufacturer,
+        i.Quantity AS quantity,
+        w.Location AS location,
+        i.LastUpdated AS lastUpdated
+        FROM
+        inventory i
+        INNER JOIN medicaldevices m ON i.DeviceID = m.DeviceID
+        INNER JOIN warehouses w ON i.WarehouseID = w.WarehouseID
+        <where>
+            m.status = 1
+            <if test="deviceName != null and deviceName != ''">
+                AND m.DeviceName LIKE CONCAT('%', #{deviceName}, '%')
+            </if>
+            <if test="category != null and category != ''">
+                AND m.Category = #{category}
+            </if>
+            <if test="manufacturer != null and manufacturer != ''">
+                AND m.Manufacturer LIKE CONCAT('%', #{manufacturer}, '%')
+            </if>
+        </where>
+    </select>
+    <select id="searchAll" resultType="com.medical.entity.Inventory">
+        SELECT
+            md.DeviceName,
+            md.ModelNumber
+        FROM
+            inventory i
+                JOIN
+            medicaldevices md ON i.DeviceID = md.DeviceID;
+    </select>
+    <select id="selectById" resultType="com.medical.entity.Params">
+        SELECT
+            i.InventoryID AS InventoryID,
+            m.DeviceName AS deviceName,
+            m.ModelNumber AS modelNumber,
+            m.Category AS category,
+            m.Manufacturer AS manufacturer,
+            i.Quantity AS quantity,
+            w.Location AS warehouse,
+            i.LastUpdated AS lastUpdated
+        FROM
+            inventory i
+                INNER JOIN medicaldevices m ON i.DeviceID = m.DeviceID
+                INNER JOIN warehouses w ON i.WarehouseID = w.WarehouseID
+        where InventoryID = #{inventoryID}
+    </select>
+
+
+</mapper>

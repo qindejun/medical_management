@@ -1,0 +1,49 @@
+spring:
+  #允许依赖循环
+  main:
+    allow-circular-references: true
+  #数据库连接信息
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/medicaldevicemanagement?serverTimezone=Asia/Shanghai
+    username: root
+    password: 123456
+
+  #文件上传配置
+  servlet:
+    multipart:
+      #配置单个文件上传大小限制
+      max-file-size: 10MB
+      #配置单个请求最大大小的限制
+      max-request-size: 100MB
+  web:
+    resources:
+      # 静态资源路径
+      static-locations: classpath:/static/,file:D:/Java/JavaWeb/web/itheima_web_project/medical-devices-management/src/main/resources/static/images/
+
+mybatis:
+  configuration:
+    #配置mybatis的日志, 指定输出到控制台
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    #开启mybatis的驼峰命名自动映射开关
+    map-underscore-to-camel-case: true
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.medical.entity
+#spring事务管理日志
+logging:
+  level:
+    org.springframework.jdbc.support.JdbcTransactionManager: debug
+
+#分页
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+  params: count=countSql
+
+server:
+  port: 9090
+
+#文件上传本地路径
+UPLOAD_PATH: D:/Java/JavaWeb/web/itheima_web_project/medical-devices-management/src/main/resources/static/images
+

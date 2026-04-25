@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.medical.mapper.AuthCodeMapper">
+    <select id="selectAll" resultType="com.medical.entity.AuthCode">
+        SELECT
+        ac.CodeID AS codeId,
+        ac.AuthCode AS authCode,
+        e.Name AS name,
+        e.Position AS position,
+        e.Department AS department,
+        e.Role AS role,
+        ac.Status AS status,
+        ac.UsedBy AS usedBy,
+        ac.UsedAt AS usedAt
+        FROM auth_codes ac
+        LEFT JOIN employees e ON ac.UsedBy = e.EmployeeID
+        order by UsedAt DESC
+    </select>
+    <select id="search" resultType="com.medical.entity.AuthCode">
+        SELECT
+        ac.CodeID AS codeId,
+        ac.AuthCode AS authCode,
+        e.Name AS name,
+        e.Position AS position,
+        e.Department AS department,
+        e.Role AS role,
+        ac.Status AS status,
+        ac.UsedBy AS usedBy,
+        ac.UsedAt AS usedAt
+        FROM auth_codes ac
+        LEFT JOIN employees e ON ac.UsedBy = e.EmployeeID
+        <where>
+            <if test="name != null and name != ''">
+                AND e.Name LIKE CONCAT('%', #{name}, '%')
+            </if>
+            <if test="role != null and role != ''">
+                AND ac.Role = #{role}
+            </if>
+            <if test="status != null">
+                AND ac.Status = #{status}
+            </if>
+        </where>
+        order by UsedAt DESC
+    </select>
+    <select id="selectById" resultType="com.medical.entity.AuthCode">
+        SELECT ac.CodeID    AS codeId,
+               ac.AuthCode  AS authCode,
+               e.Name       AS name,
+               e.Position   AS position,
+               e.Department AS department,
+               e.Role       AS role,
+               ac.Status    AS status,
+               ac.UsedBy    AS usedBy,
+               ac.UsedAt    AS usedAt
+        FROM auth_codes ac
+                 LEFT JOIN employees e ON ac.UsedBy = e.EmployeeID
+        where CodeID = #{codeId}
+    </select>
+</mapper>

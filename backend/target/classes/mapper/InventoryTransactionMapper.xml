@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.medical.mapper.InventoryTransactionMapper">
+
+    <insert id="out">
+        insert into inventorytransactions (TransactionType, DeviceName, ModelNumber, Quantity, FromWarehouse, TransactionDate, Employee)
+        values ('出库',#{deviceName},#{modelNumber},#{quantity},#{warehouse},#{dateTime},#{name})
+    </insert>
+    <insert id="in">
+        insert into inventorytransactions (TransactionType, DeviceName, ModelNumber, Quantity, ToWarehouse, TransactionDate, Employee)
+        values ('入库',#{deviceName},#{modelNumber},#{quantity},#{warehouse},#{dateTime},#{name})
+    </insert>
+    <insert id="transfer">
+        insert into inventorytransactions (TransactionType, DeviceName, ModelNumber, Quantity, FromWarehouse,ToWarehouse, TransactionDate, Employee)
+        values ('调拨',#{deviceName},#{modelNumber},#{quantity},#{outWarehouse},#{inWarehouse},#{dateTime},#{name})
+    </insert>
+    <insert id="Edit">
+        insert into inventorytransactions (TransactionType, DeviceName, ModelNumber, Quantity, FromWarehouse,ToWarehouse, TransactionDate, Employee,BeforeEdit)
+        values ('修改',#{deviceName},#{modelNumber},#{quantity},#{warehouse},#{warehouse},#{dateTime},#{name},#{beforeEdit})
+    </insert>
+    <select id="search" resultType="com.medical.entity.InventoryTransaction">
+        SELECT *
+        FROM inventorytransactions
+        WHERE 1 = 1
+        <!-- 判断 operationTypes 数组是否为空 -->
+        <if test="operationTypes != null and operationTypes.size() > 0">
+            AND TransactionType IN
+            <foreach item="type" collection="operationTypes" open="(" separator="," close=")">
+                #{type}
+            </foreach>
+        </if>
+        <!-- 判断 timeRange 数组是否为空 -->
+        <if test="timeRange != null and timeRange.size() == 2">
+            AND TransactionDate BETWEEN #{timeRange[0]} AND #{timeRange[1]}
+        </if>
+    </select>
+</mapper>

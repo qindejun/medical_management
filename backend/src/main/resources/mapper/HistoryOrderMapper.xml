@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.medical.mapper.HistoryOrderMapper">
+
+    <select id="findAllHistory" resultType="com.medical.entity.Order">
+        select * from orders
+        <where>
+            Status = '已完成'
+            <if test="name != null and name !=''">
+                and Employee = #{name}
+            </if>
+            <if test="customer != null and customer !=''">
+                and Customer = #{customer}
+            </if>
+        </where>
+    </select>
+    <select id="findAllCustomers" resultType="java.lang.String">
+        select DISTINCT Customer from orders
+        <where>
+            Status = '已完成'
+            <if test="name != null and name != ''">
+                and Employee = #{name}
+            </if>
+        </where>
+    </select>
+</mapper>
